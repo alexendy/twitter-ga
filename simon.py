@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import twitter
+#on va pas détailler.
+
+import twitter #library python-twitter proposé par david
 import random 
 import time 
 
@@ -8,6 +10,7 @@ api = twitter.Api(consumer_key='XKQ0jsxPiDcUuGZjU2nYSA',
 consumer_secret='jU4xkJlOg9j3tQi3UCY80TVUGu4MBsHjXpVSD31TQY', access_token_key='2349861931-AuTecfyzW3aSvinkywuD65RHD4U1vhYktePSEOi', access_token_secret='84dFSLjIfj8f2894tzLEXlUFbRhGPA4qeCEAGo1CW2Rx7')
 
 withBact=api.GetSearch(term='bacteria',count=200)
+
 
 print len(withBact)
 
