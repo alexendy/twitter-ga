@@ -1,15 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 """ Alexandre Coninx
     Imperial College London, 04/03/2014
 """ 
 
-import numpy as np
-
-import twitter
 from markovstate import MarkovState
-
+import codecs
 
 topics = ("evolution","Darwin","natural selection","survival of the fittest")
 
@@ -18,19 +15,18 @@ topics = ("evolution","Darwin","natural selection","survival of the fittest")
 
 def main():
 	chain = MarkovState()
-	print "Loading sources..."
-	chain.load("texts/origin-of-species.txt")
-	print "Done"
 
-	api =  twitter.Api(consumer_key='XKQ0jsxPiDcUuGZjU2nYSA',
-			consumer_secret='jU4xkJlOg9j3tQi3UCY80TVUGu4MBsHjXpVSD31TQY',
-			access_token_key='2349861931-AuTecfyzW3aSvinkywuD65RHD4U1vhYktePSEOi',
-			access_token_secret='84dFSLjIfj8f2894tzLEXlUFbRhGPA4qeCEAGo1CW2Rx7')
+	print("Initializing Markov chain...")
+	trainingdata = codecs.open("twitter.txt",'r','utf-8')
+	chain.train(3,trainingdata,True)
+	trainingdata.close()
+#	chain.dump("foo.mkv")
+	print("Done init. Testing:")
+	for topic in topics:
+		print ("According to Twitter, here is some stuff about "+topic+":")
+		print (chain.generate(1))
+	
 
-	tweets = api.GetSearch(term='evolution', count=200)
-	print str(len(tweets))+" tweets found about evolution"
-	for t in tweets:
-		print "* "+t.text
 
 
 

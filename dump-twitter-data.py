@@ -21,7 +21,7 @@ def main():
 
 	f = codecs.open(filename,'w','utf-8')
 	for topic in topics:
-		tweets = api.GetSearch(term=topic, count=1000)
+		tweets = api.GetSearch(term=topic, lang='en', count=1000)
 		print(str(len(tweets))+" tweets found about "+topic)
 		for t in tweets:
 			f.write(t.text)
