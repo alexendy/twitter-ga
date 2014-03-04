@@ -19,12 +19,14 @@ def main():
 			access_token_key='2349861931-AuTecfyzW3aSvinkywuD65RHD4U1vhYktePSEOi',
 			access_token_secret='84dFSLjIfj8f2894tzLEXlUFbRhGPA4qeCEAGo1CW2Rx7')
 
-	f = codecs.open(filename,'w','utf-8')
+	f = open(filename,'w')
 	for topic in topics:
 		tweets = api.GetSearch(term=topic, lang='en', count=1000)
 		print(str(len(tweets))+" tweets found about "+topic)
 		for t in tweets:
-			f.write(t.text)
+			# Brutally convert to ASCII
+			asciidata=t.text.encode("ascii","ignore")
+			f.write(asciidata)
 	f.close()
 	
 
