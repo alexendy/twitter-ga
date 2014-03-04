@@ -8,16 +8,16 @@
 import numpy as np
 
 import twitter
-import markov
+from markovstate import MarkovState
 
 
-
+topics = ("evolution","Darwin","natural selection","survival of the fittest")
 
 
 
 
 def main():
-	chain = markov.Markov()
+	chain = MarkovState()
 	print "Loading sources..."
 	chain.load("texts/origin-of-species.txt")
 	print "Done"
