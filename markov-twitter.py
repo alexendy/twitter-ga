@@ -15,7 +15,8 @@ import random
 
 topics = ("evolution","Darwin","natural selection","survival of the fittest")
 
-sources = ["twitter.txt"]
+#sources = ["twitter.txt"]
+sources = ["twitter.txt", "texts/origin-of-species.txt"]
 
 
 def get_generator_for_files(files):
@@ -52,11 +53,11 @@ def get_characters_about(chain, prefix, nmax=140):
 
 def main():
 	chain = MarkovState()
-	print("Initializing Markov chain...")
+	print("Initializing Markov chain with files: "+str(sources))
 	chain.train(2,get_generator_for_files(sources),noparagraphs=True)
 	print("Done init. Testing:")
 	for topic in topics:
-		print ("According to Twitter, here is some stuff about "+topic+":")
+		print ("According to Twitter and Charles Darwin, here is some stuff about "+topic+":")
 		print(get_characters_about(chain, topic)+"\n")
 		time.sleep(1)
 	

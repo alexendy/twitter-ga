@@ -4,6 +4,13 @@ twitter-ga
 Genetic algorithms and twitter stuff.
 
 
+
+How to test stuff
+-----------------
+* Run dump-twitter-data.py to get some Twitter data about some topics (can be set in the file)
+* Run markov-twitter.py to generate tweets about those topics and Darwin's *On the Origin of Species* (You can change the sources and topics in the file). Tweets will be 140 characters max
+
+
 References
 ----------
 * Bot IRC Triplie-NG : https://github.com/spion/triplie-ng/
