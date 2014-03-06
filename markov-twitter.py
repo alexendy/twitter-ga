@@ -34,10 +34,10 @@ def get_generator_for_files(files):
 
 
 # Get 140-characters max messages strting with a prefix from the chain
-def get_characters_about(chain, prefix, nmax=140):
+def get_characters_about(chain, prefix, nmax=140, randomseed=None):
 	# Abide by the 140 charcters limit
 	sentence = prefix+" "
-	s = int(time.time())
+	s = randomseed
 	chunk = chain.generate(chunks=1, seed=s, prefix=tuple(prefix.split()))
 	sentence += chunk
 	while True:
@@ -55,12 +55,18 @@ class TwitterBot:
 	def __init__(self, chain_length=2):
 		self.chain = MarkovState()
 		self.n = chain_length
+		self.seed = time.time()
 	
 	def init_from_texts(self, sources):
 		self.chain.train(self.n, get_generator_for_files(sources), noparagraphs=True)
 	
+	def renew_seed(self):
+		sr = random.SystemRandom()
+		self.seed = sr.randint(0,1000000000)
+
 	def get_tweet_about(self, prefix):
-		return(get_characters_about(self.chain, prefix))
+		self.renew_seed()
+		return(get_characters_about(self.chain, prefix, 140, self.seed))
 
 	def print_chain_info(self):
 		c = self.chain.markov # the Markov object
@@ -141,7 +147,6 @@ def main():
 		b.print_ngram_info(tuple(topic.split()))
 		print ("According to Twitter and Charles Darwin, here is some stuff about "+topic+":")
 		print(b.get_tweet_about(topic)+"\n")
-		time.sleep(1)
 
 
 if __name__ == "__main__":
