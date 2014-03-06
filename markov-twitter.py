@@ -109,18 +109,25 @@ class TwitterBot:
 				print("* "+str(k)+" : "+str(node[1][k])+" ("+str(int(round((100*node[1][k]/float(node[0])))))+"%)")
 
 
-	def mutate_links_weights(self, p_mutate):
-		for k in self.chain.markov.data.keys():
-			if(random.random() < p_mutate):
-				pass
-				
-			
-
-		
-		
-
-
-
+	def mutate_links_weights(self, p_mutation, mutation_power):
+		"""Mutate the links weights.
+    		Each link has a probability p_mutation to be affected.
+	    	mutation_power is the gaussian mutation strength,
+		relative to the existing weight (= big weights will be more
+		altered than small ones in any way)
+		"""
+		n_mutated = 0
+		for k in self.chain.markov.data.keys(): # For each node
+			delta_total = 0
+			for k2 in self.chain.markov.data[k][1].keys(): # For each link
+				if(random.random() < p_mutation):
+					original_v = self.chain.markov.data[k][1][k2]
+					delta = int(round(random.gauss(0.,mutation_power*original_v))) # mutation_power is a coefficient of variation
+					self.chain.markov.data[k][1][k2] += delta
+					delta_total += delta
+					n_mutated += 1
+			self.chain.markov.data[k][0] += delta_total # adjust number of occurences
+		print("Links mutation done. "+str(n_mutated)+" links were altered.")
 
 
 def main():
@@ -129,16 +136,12 @@ def main():
 	print("Done init. Testing:")
 #	b.print_chain_info()
 #	b.print_ngram_info(("evolution","of"))
+	b.mutate_links_weights(0.05,0.5)
 	for topic in topics:
 		b.print_ngram_info(tuple(topic.split()))
 		print ("According to Twitter and Charles Darwin, here is some stuff about "+topic+":")
 		print(b.get_tweet_about(topic)+"\n")
 		time.sleep(1)
-	
-
-
-
-
 
 
 if __name__ == "__main__":
