@@ -95,6 +95,19 @@ class MarkovState:
         self.markov.train(training_data)
         self.generator = None
 
+    def train_more(self, stream, noparagraphs=False):
+        """Add some data to an existing chain.
+        """
+        if self.markov is None:
+            raise MarkovStateError("No markov chain loaded!")
+
+        training_data = tokenise.Tokeniser(stream=stream,
+                                           noparagraphs=noparagraphs)
+       
+        self.markov.train(training_data)
+        self.generator = None # Reinitialize the generator
+
+
     def load(self, filename):
         """Load a markov chain from a file.
         """
