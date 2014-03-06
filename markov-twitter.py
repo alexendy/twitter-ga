@@ -90,6 +90,21 @@ class TwitterBot:
 		for n in odk:
 			print(str(outdegree[n])+" nodes have an outdegree of "+str(n))
 	
+	def print_ngram_info(self, ngram):
+		ng = ngram
+		if(len(ngram) > self.n):
+			i = len(ngram) - self.n
+			ng = ngram[i:]
+			print("WARNING: truncating "+str(ngram)+" to "+str(ng)+" because it is longer than the chain length of "+str(self.n))
+
+		if(ngram not in self.chain.markov.data.keys()):
+			print("n-gram "+str(ng)+" does not appear in the chain")
+		else:
+			node = self.chain.markov.data[ng]
+			print("n-gram "+str(ng)+" occured "+str(node[0])+" times in training set and has an outdegree of "+str(len(node[1])))
+			print("Outer connectivity:")
+			for k, v in node[1].items():
+				print("* "+str(k)+" : "+str(v)+" ("+str(int(round((100*v/float(node[0])))))+"%)")
 
 
 	def mutate_links_weights(self, p_mutate):
@@ -110,7 +125,8 @@ def main():
 	b = TwitterBot(2)
 	b.init_from_texts(sources)
 	print("Done init. Testing:")
-	b.print_chain_info()
+#	b.print_chain_info()
+	b.print_ngram_info(("evolution","of"))
 #	for topic in topics:
 #		print ("According to Twitter and Charles Darwin, here is some stuff about "+topic+":")
 #		print(get_characters_about(chain, topic)+"\n")
