@@ -18,7 +18,7 @@ topics = ("evolution","Darwin","natural selection","survival of the fittest")
 #sources = ["twitter.txt"]
 sources = ["twitter.txt", "texts/origin-of-species.txt"]
 
-
+# Get generator objetcs from a list of files
 def get_generator_for_files(files):
 	paths = [path
 		for ps in files
@@ -33,6 +33,7 @@ def get_generator_for_files(files):
 			
 
 
+# Get 140-characters max messages strting with a prefix from the chain
 def get_characters_about(chain, prefix, nmax=140):
 	# Abide by the 140 charcters limit
 	sentence = prefix+" "
@@ -50,16 +51,70 @@ def get_characters_about(chain, prefix, nmax=140):
 
 
 
+class TwitterBot:
+	def __init__(self, chain_length=2):
+		self.chain = MarkovState()
+		self.n = chain_length
+	
+	def init_from_texts(self, sources):
+		self.chain.train(self.n, get_generator_for_files(sources), noparagraphs=True)
+	
+	def get_tweet_about(self, prefix):
+		return(get_characters_about(self.chain, prefix))
+
+	def print_chain_info(self):
+		c = self.chain.markov # the Markov object
+		occurences = {}
+		outdegree = {}
+		n_links = 0
+		for k in c.data.keys():
+			if(c.data[k][0] in occurences.keys()):
+				occurences[c.data[k][0]] += 1
+			else:
+				occurences[c.data[k][0]] = 1
+			if(len(c.data[k][1]) in outdegree.keys()):
+				outdegree[len(c.data[k][1])] += 1
+			else:
+				outdegree[len(c.data[k][1])] = 1
+			n_links += len(c.data[k][1])
+		print("That chain is composed of "+str(self.n)+"-grams (and shorter)")
+		print(str(len(c.data.keys()))+" nodes and "+str(n_links)+" links in the graph:")
+		ok = list(occurences.keys())
+		ok.sort(reverse=True)
+		odk = list(outdegree.keys())
+		odk.sort(reverse=True)
+		print("Occurence statistics:\n---------------------")
+		for n in ok:
+			print(str(occurences[n])+" n-grams were encountered "+str(n)+" times")
+		print("Outdegree statistics:\n---------------------")
+		for n in odk:
+			print(str(outdegree[n])+" nodes have an outdegree of "+str(n))
+	
+
+
+	def mutate_links_weights(self, p_mutate):
+		for k in self.chain.markov.data.keys():
+			if(random.random() < p_mutate):
+				pass
+				
+			
+
+		
+		
+
+
+
+
 
 def main():
-	chain = MarkovState()
-	print("Initializing Markov chain with files: "+str(sources))
-	chain.train(2,get_generator_for_files(sources),noparagraphs=True)
+	b = TwitterBot(2)
+	b.init_from_texts(sources)
 	print("Done init. Testing:")
-	for topic in topics:
-		print ("According to Twitter and Charles Darwin, here is some stuff about "+topic+":")
-		print(get_characters_about(chain, topic)+"\n")
-		time.sleep(1)
+	b.print_chain_info()
+#	for topic in topics:
+#		print ("According to Twitter and Charles Darwin, here is some stuff about "+topic+":")
+#		print(get_characters_about(chain, topic)+"\n")
+#		time.sleep(1)
 	
 
 
