@@ -1,0 +1,264 @@
+%% LyX 2.0.6 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{luainputenc}
+\usepackage{babel}
+\begin{document}
+
+\title{Twitter Bot}
+
+\maketitle
+
+\section{L'Algo Génétique}
+
+
+\subsection{La base lexicale initiale}
+
+Plusieurs possibilitées s'offrent à nous
+
+
+\subsubsection{Initialisée à partir de textes externe}
+
+Des texte de Darwin, des livres érotiques, des discours de Sarkozy,
+les grandes heures du stalinisme, des texte conspirationisme ou que
+sais-je d'autre... Les hybrides contre natures étant possibles. Ça
+permet de partir de textes rigolo et ça s'accorde bien avec un ciblage
+de nos lecteur par hashtag
+
+
+\subsubsection{Initialisée à partir de twitter}
+
+Vraissemblablement sur un hashtag particulier ça nous offre l'avantage
+de produire du texte en style twitter mis à part ça ça ne change pas
+grand chose
+
+
+\subsubsection{Pas initialisée}
+
+On peut aussi imaginer qu'initialiser le texte fasse parti du processus,
+les bases de données utilisées étant déterminées par l'algo ça offre
+des possibilitées de type j'initialise mon générateur en fonction
+de ce que dis mon interlocuteur. Paradoxalement si à premiére vu ça
+à l'air plus fin j'ai aussi l'impression que ça laisse beaucoup moins
+de latitude à l'algo génétique pour optimiser le texte généré.
+
+
+\subsubsection{Mixer la solution 1.1.1 et la solution 1.1.2}
+
+Ça reste quelque chose d'assez simple
+
+
+\subsubsection{Mélanger tout}
+
+Bien sur ça rend le machin bien plus compliqué mais l'on peut imaginer
+mélanger tout ça
+
+
+\subsection{Trigger}
+
+Comment l'ago va il décider de produire un twitt ? Il me semble que
+la meilleurs solution consiste à utiliser les algos génétiques pour
+produire des requétes proches (dans la sytaxe et le fonctionnement
+générale'' des requétes SQL. Des trucs du genre donne moi le mot
+le plus fréquent dans les requétes utilisant le hastag truc ou au
+contraire donne moi le nom de l'utilisateur qui a posté en dernier
+sur le hashtag machin. Ça va surement pas être si simple que ça à
+construire ce machin.
+
+
+\subsubsection{Au minimum}
+
+Au minimum deux données seraient extraites de ces requétes SQL:
+\begin{itemize}
+\item Si il faut ou non produire un twitt
+\item Un mot pour initialiser le systéme de génération de texte
+\end{itemize}
+En écrivant celà je me rend compte que l'abscence de mot peut être
+considéré comme l'abscence de twitt.
+
+
+\subsubsection{Idéalement}
+
+Idéalement il faudrait pouvoir extraire un peu plus d'informations
+de ces requétes tel que : le nom d'un ou plusiseurs, un ou plusieurs
+hashtags.
+
+
+\subsection{Mutation et Crossover}
+
+
+\subsubsection{Mutation}
+
+C'est assez simple à imaginer dans la version la plus simple (avec
+juste un graph à faire évoluer) les mutations consiste justent à modifier
+certaines valeures de certain liens du graph voir en rajouter ou en
+supprimer.
+
+Dans des versions un peu plus avancées ça va consister à changer les
+paramétres du trigger
+
+
+\subsubsection{Crossover}
+
+Là ça me parait bien plus intéressant (et plus compliqué). Dans la
+version la plus simple de la chose il va falloir échanger des morceau
+de Graph... 
+
+A priori le principe serait d'échager des parties de graph à partir
+d'un noeud $N$ et en s'éloignant de ce noeud d'un certain nombre
+de niveau $n$ toutes les connexion $N_{c}$ où $N_{c}<n$ de chaque
+graph sont échangées entre les deux graphs. pour $N_{c}>n$ les connexions
+ne bougent pas. Et pour $N_{c}=n$ il faut déciner ce qu'on fait :p.
+On a aussi un probléme : j'ai peur qu'on génére progressivement des
+mots complétements isolés : metton qu'Alebert est connecté à C dans
+le graph 1 et à en dehors du ``rayon'' de C dans le graph 2. après
+l'échange il ne sera plus connecté à rien dans le graph 1 le mot aura
+disparu mais l'on n'ajoutera jamais de nouveaux mots...
+
+
+\subsection{La fitness}
+
+
+\subsubsection{propres à twitter}
+
+Il me semble que l'on peut utiliser 3 métriques propres à twitter
+: les star (favoris), le retweets, et les réponses. Reste à déterminer
+comment les répartir
+
+
+\subsubsection{Apprentissage supervisé}
+
+Rien n'empéche non plus d'évaluer partiellement nous même la qualité
+des twitts
+
+
+\subsection{Structure du bidule}
+
+Partons d'une version minimale qui répond aux twitt d'un hashtag particulier
+à partir du moment ou elle trouve un mot contenu 
+
+
+\subsubsection{Class Chaine Markov / Genotype}
+
+
+\paragraph{Initialisateur}
+
+Une méthode capable de nous générer un graph sous forme de chaine
+de markov à partir d'un hashtag twitter et de nous sauvegarder tout
+ça (sous forme de fichier ?)
+
+
+\paragraph{Loader}
+
+Une méthode pour charger notre chaine de markov à partir d'un fichier
+de sauvegarde
+
+
+\paragraph{Mutation}
+
+Une méthode effectuant des mutations sur notre chaine de markov (changement
+des valeurs de certains noeud de la chaine)
+
+
+\paragraph{Muation nouveau lien}
+
+Création d'un nouveau lien entre deux mots
+
+
+\paragraph{Mutation supression}
+
+Supression d'un noeud de la chaine
+
+
+\paragraph{Mutation twitt}
+
+Un systéme de mutation affectant une chaine de Markov à partir d'une
+série de twitt
+
+
+\paragraph{Crossover}
+
+Un méthode effectuant un crossover entre deux graphs (voir plus haut)
+
+
+\paragraph{Taux de connexion}
+
+Une méthode renvoyant le taux de connexion d'un mot dans le graph
+$T=\frac{Connexions_{mot}*NbrMots_{graph}}{Connexions_{graph}}$
+
+
+\paragraph{Générateur de twitt}
+
+Un générateur de twitt générant ça à partir du graph sans dépasser
+une taille de 140 - un certains nombre de caractéres pour la réponse
+et éventuellement un tagg pour savoir de quel genotype vient le twitt 
+
+
+\subsubsection{Algo génétique}
+
+
+\subparagraph{Trigger}
+
+Un trigger dont le rôle serait de sélectionner alléatoirement un génome
+parmi les génomes à évaluer (en commançant par ceux ayant générés
+le moins de twitt ?) éventuellement de vérifier si ce génotype est
+``compatible'' avec le twitt en question en par exemple vérifiant
+qu'il existe au moins un mot avec un taux de connexion suffisant dans
+le graph (il faudra préciser ce qu'on entend par suffisant). Puis
+si la condition précédente est vérifiée génération d'un twitt (et
+sauvegarde quelque part que ce twitt est associé à l'algo machin (dans
+le twitt ? ) et sinon répéter l'oppération pour tous les génotypes
+n'ayant pas générés suffisament de twitt pour être évalués. 
+
+
+\paragraph{Calculateur de fitness}
+
+Une méthode pour calculer la fitness d'un genotype. Par exemple $fitness=4*nbr_{r\acute{e}ponses}+2*nbr_{retwitt}+nbr_{favoris}$ 
+
+
+\paragraph{Gestions des génération}
+
+Un systéme classique de gestion des générations d'individus : évaluation
+de la fitness de chaque individus, puis sélection par tournois/élitisme
+(à priori rien de spécifique de ce côté)
+
+
+\subsubsection{Routine}
+
+Une routine pour vérifier réguliérement l'arrivée de nouveaux twitt
+(sur le hashtag en question), lancer le trigger pour chacun d'entre
+eux et enfin lancer l'évaluation de la fitness de tout ce beau monde
+une foi tout les twitt effectués et un laps de temps écoulés (ou un
+autre laps de temps plus long écoulé en cas de génotype ne générant
+pas suffisament de twitt). 
+
+
+\subsection{Contraintes spécifiques à twitter }
+
+
+\subsubsection{Texte limité à 150 caractéres.}
+
+
+\subsubsection{Choisir notre langue}
+
+
+\subsection{Problémes potentiels}
+
+
+\subsubsection{Les autres bots}
+
+Il est bien possible que notre twitt bot se mette rapidement à dialoguer
+avec d'autre twittbot : ou pas => houba, ou pas => houba.... le bonheur
+!!!! Ce probléme peu nous amener à prendre en compte le nombre d'utilisateurs
+différents dans le calcul de la fitness.
+
+
+\section{La question scientifique }
+
+Pour le moment perso je ne vois pas grand chose d'autre que de comparer
+la capacité de générer des IA capables de passer le test de Turing
+dans un contexte ou la taille du texte n'est pas limité à un contexte
+ou la taille du texte est limité (twitter)... Malheureusement ça me
+semble compliqué de réutiliser notre systéme ailleurs que sur twitter
+\end{document}

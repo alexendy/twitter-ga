@@ -1,0 +1,479 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Twitter Bot
+\end_layout
+
+\begin_layout Section
+L'Algo Génétique
+\end_layout
+
+\begin_layout Subsection
+La base lexicale initiale
+\end_layout
+
+\begin_layout Standard
+Plusieurs possibilitées s'offrent à nous
+\end_layout
+
+\begin_layout Subsubsection
+Initialisée à partir de textes externe
+\end_layout
+
+\begin_layout Standard
+Des texte de Darwin, des livres érotiques, des discours de Sarkozy, les
+ grandes heures du stalinisme, des texte conspirationisme ou que sais-je
+ d'autre...
+ Les hybrides contre natures étant possibles.
+ Ça permet de partir de textes rigolo et ça s'accorde bien avec un ciblage
+ de nos lecteur par hashtag
+\end_layout
+
+\begin_layout Subsubsection
+Initialisée à partir de twitter
+\end_layout
+
+\begin_layout Standard
+Vraissemblablement sur un hashtag particulier ça nous offre l'avantage de
+ produire du texte en style twitter mis à part ça ça ne change pas grand
+ chose
+\end_layout
+
+\begin_layout Subsubsection
+Pas initialisée
+\end_layout
+
+\begin_layout Standard
+On peut aussi imaginer qu'initialiser le texte fasse parti du processus,
+ les bases de données utilisées étant déterminées par l'algo ça offre des
+ possibilitées de type j'initialise mon générateur en fonction de ce que
+ dis mon interlocuteur.
+ Paradoxalement si à premiére vu ça à l'air plus fin j'ai aussi l'impression
+ que ça laisse beaucoup moins de latitude à l'algo génétique pour optimiser
+ le texte généré.
+\end_layout
+
+\begin_layout Subsubsection
+Mixer la solution 1.1.1 et la solution 1.1.2
+\end_layout
+
+\begin_layout Standard
+Ça reste quelque chose d'assez simple
+\end_layout
+
+\begin_layout Subsubsection
+Mélanger tout
+\end_layout
+
+\begin_layout Standard
+Bien sur ça rend le machin bien plus compliqué mais l'on peut imaginer mélanger
+ tout ça
+\end_layout
+
+\begin_layout Subsection
+Trigger
+\end_layout
+
+\begin_layout Standard
+Comment l'ago va il décider de produire un twitt ? Il me semble que la meilleurs
+ solution consiste à utiliser les algos génétiques pour produire des requétes
+ proches (dans la sytaxe et le fonctionnement générale
+\begin_inset Quotes erd
+\end_inset
+
+ des requétes SQL.
+ Des trucs du genre donne moi le mot le plus fréquent dans les requétes
+ utilisant le hastag truc ou au contraire donne moi le nom de l'utilisateur
+ qui a posté en dernier sur le hashtag machin.
+ Ça va surement pas être si simple que ça à construire ce machin.
+\end_layout
+
+\begin_layout Subsubsection
+Au minimum
+\end_layout
+
+\begin_layout Standard
+Au minimum deux données seraient extraites de ces requétes SQL:
+\end_layout
+
+\begin_layout Itemize
+Si il faut ou non produire un twitt
+\end_layout
+
+\begin_layout Itemize
+Un mot pour initialiser le systéme de génération de texte
+\end_layout
+
+\begin_layout Standard
+En écrivant celà je me rend compte que l'abscence de mot peut être considéré
+ comme l'abscence de twitt.
+\end_layout
+
+\begin_layout Subsubsection
+Idéalement
+\end_layout
+
+\begin_layout Standard
+Idéalement il faudrait pouvoir extraire un peu plus d'informations de ces
+ requétes tel que : le nom d'un ou plusiseurs, un ou plusieurs hashtags.
+\end_layout
+
+\begin_layout Subsection
+Mutation et Crossover
+\end_layout
+
+\begin_layout Subsubsection
+Mutation
+\end_layout
+
+\begin_layout Standard
+C'est assez simple à imaginer dans la version la plus simple (avec juste
+ un graph à faire évoluer) les mutations consiste justent à modifier certaines
+ valeures de certain liens du graph voir en rajouter ou en supprimer.
+\end_layout
+
+\begin_layout Standard
+Dans des versions un peu plus avancées ça va consister à changer les paramétres
+ du trigger
+\end_layout
+
+\begin_layout Subsubsection
+Crossover
+\end_layout
+
+\begin_layout Standard
+Là ça me parait bien plus intéressant (et plus compliqué).
+ Dans la version la plus simple de la chose il va falloir échanger des morceau
+ de Graph...
+ 
+\end_layout
+
+\begin_layout Standard
+A priori le principe serait d'échager des parties de graph à partir d'un
+ noeud 
+\begin_inset Formula $N$
+\end_inset
+
+ et en s'éloignant de ce noeud d'un certain nombre de niveau 
+\begin_inset Formula $n$
+\end_inset
+
+ toutes les connexion 
+\begin_inset Formula $N_{c}$
+\end_inset
+
+ où 
+\begin_inset Formula $N_{c}<n$
+\end_inset
+
+ de chaque graph sont échangées entre les deux graphs.
+ pour 
+\begin_inset Formula $N_{c}>n$
+\end_inset
+
+ les connexions ne bougent pas.
+ Et pour 
+\begin_inset Formula $N_{c}=n$
+\end_inset
+
+ il faut déciner ce qu'on fait :p.
+ On a aussi un probléme : j'ai peur qu'on génére progressivement des mots
+ complétements isolés : metton qu'Alebert est connecté à C dans le graph
+ 1 et à en dehors du 
+\begin_inset Quotes eld
+\end_inset
+
+rayon
+\begin_inset Quotes erd
+\end_inset
+
+ de C dans le graph 2.
+ après l'échange il ne sera plus connecté à rien dans le graph 1 le mot
+ aura disparu mais l'on n'ajoutera jamais de nouveaux mots...
+\end_layout
+
+\begin_layout Subsection
+La fitness
+\end_layout
+
+\begin_layout Subsubsection
+propres à twitter
+\end_layout
+
+\begin_layout Standard
+Il me semble que l'on peut utiliser 3 métriques propres à twitter : les
+ star (favoris), le retweets, et les réponses.
+ Reste à déterminer comment les répartir
+\end_layout
+
+\begin_layout Subsubsection
+Apprentissage supervisé
+\end_layout
+
+\begin_layout Standard
+Rien n'empéche non plus d'évaluer partiellement nous même la qualité des
+ twitts
+\end_layout
+
+\begin_layout Subsection
+Structure du bidule
+\end_layout
+
+\begin_layout Standard
+Partons d'une version minimale qui répond aux twitt d'un hashtag particulier
+ à partir du moment ou elle trouve un mot contenu 
+\end_layout
+
+\begin_layout Subsubsection
+Class Chaine Markov / Genotype
+\end_layout
+
+\begin_layout Paragraph
+Initialisateur
+\end_layout
+
+\begin_layout Standard
+Une méthode capable de nous générer un graph sous forme de chaine de markov
+ à partir d'un hashtag twitter et de nous sauvegarder tout ça (sous forme
+ de fichier ?)
+\end_layout
+
+\begin_layout Paragraph
+Loader
+\end_layout
+
+\begin_layout Standard
+Une méthode pour charger notre chaine de markov à partir d'un fichier de
+ sauvegarde
+\end_layout
+
+\begin_layout Paragraph
+Mutation
+\end_layout
+
+\begin_layout Standard
+Une méthode effectuant des mutations sur notre chaine de markov (changement
+ des valeurs de certains noeud de la chaine)
+\end_layout
+
+\begin_layout Paragraph
+Muation nouveau lien
+\end_layout
+
+\begin_layout Standard
+Création d'un nouveau lien entre deux mots
+\end_layout
+
+\begin_layout Paragraph
+Mutation supression
+\end_layout
+
+\begin_layout Standard
+Supression d'un noeud de la chaine
+\end_layout
+
+\begin_layout Paragraph
+Mutation twitt
+\end_layout
+
+\begin_layout Standard
+Un systéme de mutation affectant une chaine de Markov à partir d'une série
+ de twitt
+\end_layout
+
+\begin_layout Paragraph
+Crossover
+\end_layout
+
+\begin_layout Standard
+Un méthode effectuant un crossover entre deux graphs (voir plus haut)
+\end_layout
+
+\begin_layout Paragraph
+Taux de connexion
+\end_layout
+
+\begin_layout Standard
+Une méthode renvoyant le taux de connexion d'un mot dans le graph 
+\begin_inset Formula $T=\frac{Connexions_{mot}*NbrMots_{graph}}{Connexions_{graph}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Générateur de twitt
+\end_layout
+
+\begin_layout Standard
+Un générateur de twitt générant ça à partir du graph sans dépasser une taille
+ de 140 - un certains nombre de caractéres pour la réponse et éventuellement
+ un tagg pour savoir de quel genotype vient le twitt 
+\end_layout
+
+\begin_layout Subsubsection
+Algo génétique
+\end_layout
+
+\begin_layout Subparagraph
+Trigger
+\end_layout
+
+\begin_layout Standard
+Un trigger dont le rôle serait de sélectionner alléatoirement un génome
+ parmi les génomes à évaluer (en commançant par ceux ayant générés le moins
+ de twitt ?) éventuellement de vérifier si ce génotype est 
+\begin_inset Quotes eld
+\end_inset
+
+compatible
+\begin_inset Quotes erd
+\end_inset
+
+ avec le twitt en question en par exemple vérifiant qu'il existe au moins
+ un mot avec un taux de connexion suffisant dans le graph (il faudra préciser
+ ce qu'on entend par suffisant).
+ Puis si la condition précédente est vérifiée génération d'un twitt (et
+ sauvegarde quelque part que ce twitt est associé à l'algo machin (dans
+ le twitt ? ) et sinon répéter l'oppération pour tous les génotypes n'ayant
+ pas générés suffisament de twitt pour être évalués.
+ 
+\end_layout
+
+\begin_layout Paragraph
+Calculateur de fitness
+\end_layout
+
+\begin_layout Standard
+Une méthode pour calculer la fitness d'un genotype.
+ Par exemple 
+\begin_inset Formula $fitness=4*nbr_{réponses}+2*nbr_{retwitt}+nbr_{favoris}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Paragraph
+Gestions des génération
+\end_layout
+
+\begin_layout Standard
+Un systéme classique de gestion des générations d'individus : évaluation
+ de la fitness de chaque individus, puis sélection par tournois/élitisme
+ (à priori rien de spécifique de ce côté)
+\end_layout
+
+\begin_layout Subsubsection
+Routine
+\end_layout
+
+\begin_layout Standard
+Une routine pour vérifier réguliérement l'arrivée de nouveaux twitt (sur
+ le hashtag en question), lancer le trigger pour chacun d'entre eux et enfin
+ lancer l'évaluation de la fitness de tout ce beau monde une foi tout les
+ twitt effectués et un laps de temps écoulés (ou un autre laps de temps
+ plus long écoulé en cas de génotype ne générant pas suffisament de twitt).
+ 
+\end_layout
+
+\begin_layout Subsection
+Contraintes spécifiques à twitter 
+\end_layout
+
+\begin_layout Subsubsection
+Texte limité à 150 caractéres.
+\end_layout
+
+\begin_layout Subsubsection
+Choisir notre langue
+\end_layout
+
+\begin_layout Subsection
+Problémes potentiels
+\end_layout
+
+\begin_layout Subsubsection
+Les autres bots
+\end_layout
+
+\begin_layout Standard
+Il est bien possible que notre twitt bot se mette rapidement à dialoguer
+ avec d'autre twittbot : ou pas => houba, ou pas => houba....
+ le bonheur !!!! Ce probléme peu nous amener à prendre en compte le nombre
+ d'utilisateurs différents dans le calcul de la fitness.
+\end_layout
+
+\begin_layout Section
+La question scientifique 
+\end_layout
+
+\begin_layout Standard
+Pour le moment perso je ne vois pas grand chose d'autre que de comparer
+ la capacité de générer des IA capables de passer le test de Turing dans
+ un contexte ou la taille du texte n'est pas limité à un contexte ou la
+ taille du texte est limité (twitter)...
+ Malheureusement ça me semble compliqué de réutiliser notre systéme ailleurs
+ que sur twitter
+\end_layout
+
+\end_body
+\end_document
