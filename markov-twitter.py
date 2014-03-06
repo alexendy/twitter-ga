@@ -103,8 +103,10 @@ class TwitterBot:
 			node = self.chain.markov.data[ng]
 			print("n-gram "+str(ng)+" occured "+str(node[0])+" times in training set and has an outdegree of "+str(len(node[1])))
 			print("Outer connectivity:")
-			for k, v in node[1].items():
-				print("* "+str(k)+" : "+str(v)+" ("+str(int(round((100*v/float(node[0])))))+"%)")
+			ok = list(node[1].keys())
+			ok.sort()
+			for k in ok:
+				print("* "+str(k)+" : "+str(node[1][k])+" ("+str(int(round((100*node[1][k]/float(node[0])))))+"%)")
 
 
 	def mutate_links_weights(self, p_mutate):
@@ -126,11 +128,12 @@ def main():
 	b.init_from_texts(sources)
 	print("Done init. Testing:")
 #	b.print_chain_info()
-	b.print_ngram_info(("evolution","of"))
-#	for topic in topics:
-#		print ("According to Twitter and Charles Darwin, here is some stuff about "+topic+":")
-#		print(get_characters_about(chain, topic)+"\n")
-#		time.sleep(1)
+#	b.print_ngram_info(("evolution","of"))
+	for topic in topics:
+		b.print_ngram_info(tuple(topic.split()))
+		print ("According to Twitter and Charles Darwin, here is some stuff about "+topic+":")
+		print(b.get_tweet_about(topic)+"\n")
+		time.sleep(1)
 	
 
 
