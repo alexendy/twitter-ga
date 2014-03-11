@@ -12,6 +12,7 @@ import glob
 import os
 import random
 import sys
+import copy
 
 sys.path.append("lib/twitter")
 from twitter import *
@@ -62,6 +63,9 @@ class TwitterBot:
 					'jU4xkJlOg9j3tQi3UCY80TVUGu4MBsHjXpVSD31TQY')) # CONSUMER_SECRET
 		self.chain_initialized = False
 	
+	def clone(self):
+		return copy.deepcopy(self)
+
 	def train_chain(self, gen, noparagraphs):
 		if(self.chain_initialized):	
 			self.chain.train_more(gen, noparagraphs)
