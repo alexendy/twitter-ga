@@ -11,6 +11,11 @@ import fileinput
 import glob
 import os
 import random
+import sys
+
+sys.path.append("lib/twitter")
+from twitter import *
+
 
 
 topics = ("evolution","Darwin","natural selection","survival of the fittest")
@@ -31,7 +36,6 @@ def get_generator_for_files(files):
 					yield char
 	return charinput(paths)
 			
-
 
 # Get 140-characters max messages strting with a prefix from the chain
 def get_characters_about(chain, prefix, nmax=140, randomseed=None):
@@ -56,10 +60,25 @@ class TwitterBot:
 		self.chain = MarkovState()
 		self.n = chain_length
 		self.seed = time.time()
+		self.twitter = Twitter(auth=OAuth('2349861931-AuTecfyzW3aSvinkywuD65RHD4U1vhYktePSEOi', # OAUTH_TOKEN
+					'84dFSLjIfj8f2894tzLEXlUFbRhGPA4qeCEAGo1CW2Rx7', # OAUTH_SECRET
+					'XKQ0jsxPiDcUuGZjU2nYSA', # CONSUMER_KEY
+					'jU4xkJlOg9j3tQi3UCY80TVUGu4MBsHjXpVSD31TQY')) # CONSUMER_SECRET
+		self.chain_initialized = False
 	
-	def init_from_texts(self, sources):
-		self.chain.train(self.n, get_generator_for_files(sources), noparagraphs=True)
+	def train_chain(self, gen, noparagraphs):
+		if(self.chain_initialized):	
+			self.chain.train_more(gen, noparagraphs)
+		else:
+			self.chain.train(self.n, gen, noparagraphs)
+		self.chain_initialized = True
+
+	def train_from_texts(self, sources):
+		self.train_chain(get_generator_for_files(sources), noparagraphs=True)
 	
+	def train_from_twitter(self, topics):
+		pass
+
 	def renew_seed(self):
 		sr = random.SystemRandom()
 		self.seed = sr.randint(0,1000000000)
@@ -138,7 +157,7 @@ class TwitterBot:
 
 def main():
 	b = TwitterBot(2)
-	b.init_from_texts(sources)
+	b.train_from_texts(sources)
 	print("Done init. Testing:")
 #	b.print_chain_info()
 #	b.print_ngram_info(("evolution","of"))
