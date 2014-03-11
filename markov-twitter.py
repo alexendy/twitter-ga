@@ -16,12 +16,24 @@ import sys
 sys.path.append("lib/twitter")
 from twitter import *
 
+# Configuration
+# =============
 
-
+# Twitter topics for initial chain training
 topics = ("evolution","Darwin","natural selection","survival of the fittest")
+#topics = () # Train only from texts
 
-#sources = ["twitter.txt"]
-sources = ["twitter.txt", "texts/origin-of-species.txt"]
+# Textual sources for initial
+sources = ["texts/origin-of-species.txt"]
+#sources = [] # Train only from Twitter
+
+# Twitter topics on which the chain will be tested
+query_topics = topics
+
+# ============
+
+
+
 
 # Get generator objetcs from a list of files
 def get_generator_for_files(files):
@@ -60,8 +72,18 @@ class TwitterBot:
 	def train_from_texts(self, sources):
 		self.train_chain(get_generator_for_files(sources), noparagraphs=True)
 	
-	def train_from_twitter(self, topics):
-		pass
+	def train_from_twitter(self, topics, lang='en', max_count_per_tweet=1000):
+		def get_twitter_generator(api, tpcs, l, c):
+			for tp in tpcs:
+				reply = api.search.tweets(q=tp,lang=l,count=c)
+				for t in reply['statuses']:
+					# Brutally convert to ASCII
+					asciidata=t['text'].encode('UTF-8').decode("ascii","ignore")
+					for char in asciidata:
+						yield char
+		self.train_chain(get_twitter_generator(self.twitter, topics, lang, max_count_per_tweet), noparagraphs=True)
+
+		
 
 	def renew_seed(self):
 		sr = random.SystemRandom()
@@ -151,16 +173,29 @@ class TwitterBot:
 
 
 def main():
+	print("Instantiating TwitterBot and connecting to Twitter...")
 	b = TwitterBot(2)
-	b.train_from_texts(sources)
-	print("Done init. Testing:")
+	if(sources):
+		print("Training the bot from text sources: "+str(sources))
+		b.train_from_texts(sources)
+	if(topics):
+		print("Training the bot from twitter. Topics: "+str(topics))
+		b.train_from_twitter(topics)
+	print("Done with training.")
+	
+#	print("Chain statistics :")
 #	b.print_chain_info()
-#	b.print_ngram_info(("evolution","of"))
+
+	print("Mutating weights...")
 	b.mutate_links_weights(0.05,0.5)
-	for topic in topics:
-		b.print_ngram_info(tuple(topic.split()))
-		print ("According to Twitter and Charles Darwin, here is some stuff about "+topic+":")
-		print(b.get_tweet_about(topic)+"\n")
+
+	print("All done. Testing the chain output:")
+	for topic in query_topics:
+		#b.print_ngram_info(tuple(topic.split()))
+		print ("According to Twitter, and Charles Darwin, here is some stuff about "+topic+":")
+		for i in range(5):
+			print("- "+b.get_tweet_about(topic))
+		print("\n")
 
 
 if __name__ == "__main__":
