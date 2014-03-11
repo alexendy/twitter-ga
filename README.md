@@ -9,9 +9,9 @@ What you need
 * You will need python3
 * That code depends on sixohsix's Python3 twitter API. It is included in the repository as a subodule. In order to use it you will need to do the following after cloning/pulling from the twitter-ga repository:
 
-    cd twitter-ga
-    git submodule init
-    git submodule update
+	cd twitter-ga
+	git submodule init
+	git submodule update
 
 
 How to test stuff
