@@ -92,22 +92,22 @@ class TwitterBot:
 		self.train_chain(get_generator_for_files(sources), noparagraphs=True)
 	
 	def train_from_twitter(self, topics, lang='en', max_count_per_tweet=1000, no_http=True, no_hashtags=False, no_at_user=False):
-		def get_twitter_generator(api, tpcs, l, c):
+		def get_twitter_generator(api, tpcs, l, c, nlinks, nh, nat):
 			for tp in tpcs:
 				reply = api.search.tweets(q=tp,lang=l,count=c)
 				print(str(len(reply['statuses']))+" tweets about "+tp)
 				for t in reply['statuses']:
 					# Brutally convert to ASCII
 					string=t['text'].encode('UTF-8').decode("ascii","ignore")
-					if(no_http):
+					if(nlinks):
 						string = re.sub(r'http(s)?://\S+',r'',string)
-					if(no_hashtags):
+					if(nh):
 						string = re.sub(r'#\S+',r'',string)
-					if(no_at_user):
+					if(nat):
 						string = re.sub(r'@\S+',r'',string)
 					for char in string:
 						yield char
-		self.train_chain(get_twitter_generator(self.twitter, topics, lang, max_count_per_tweet), noparagraphs=True)
+		self.train_chain(get_twitter_generator(self.twitter, topics, lang, max_count_per_tweet, no_http, no_hashtags, no_at_user), noparagraphs=True)
 
 		
 
@@ -206,7 +206,7 @@ def main():
 		b.train_from_texts(sources)
 	if(topics):
 		print("Training the bot from twitter. Topics: "+str(topics))
-		b.train_from_twitter(topics, nohttp, nohashtags, noatuser)
+		b.train_from_twitter(topics, 'en', 1000, nohttp, nohashtags, noatuser)
 	print("Done with training.")
 	
 #	print("Chain statistics :")
