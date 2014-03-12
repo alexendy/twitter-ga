@@ -22,15 +22,15 @@ from twitter import *
 # =============
 
 # Twitter topics for initial chain training
-topics = ("evolution","Darwin","natural selection","survival of the fittest")
+topics = ("#evolution","#Darwin","#naturalSelection","#survivalOfTheFittest")
 #topics = () # Train only from texts
 
 # Textual sources for initial
-sources = ["texts/origin-of-species.txt"]
-#sources = [] # Train only from Twitter
+#sources = ["texts/origin-of-species.txt"]
+sources = [] # Train only from Twitter
 
 # Twitter topics on which the chain will be tested
-query_topics = topics
+query_topics = ("evolution", "Darwin", "natural selection")
 
 # Learning depth.
 # Higher = more coherence
@@ -38,13 +38,13 @@ query_topics = topics
 chain_depth = 2
 
 # Do we include HTTP(S) links in the Markov chain ?
-no_http = True
+nohttp = True
 
 # Do we include hashtags in the Markov chain ?
-no_hashtags = True
+nohashtags = False
 
 # Do we include @users tags in the Markov chain ?
-no_at_user = True
+noatuser = True
 
 # ============
 
@@ -95,6 +95,7 @@ class TwitterBot:
 		def get_twitter_generator(api, tpcs, l, c):
 			for tp in tpcs:
 				reply = api.search.tweets(q=tp,lang=l,count=c)
+				print(str(len(reply['statuses']))+" tweets about "+tp)
 				for t in reply['statuses']:
 					# Brutally convert to ASCII
 					string=t['text'].encode('UTF-8').decode("ascii","ignore")
@@ -205,7 +206,7 @@ def main():
 		b.train_from_texts(sources)
 	if(topics):
 		print("Training the bot from twitter. Topics: "+str(topics))
-		b.train_from_twitter(topics, no_http, no_hashtags, no_at_user)
+		b.train_from_twitter(topics, nohttp, nohashtags, noatuser)
 	print("Done with training.")
 	
 #	print("Chain statistics :")
