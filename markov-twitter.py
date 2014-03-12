@@ -32,6 +32,20 @@ sources = ["texts/origin-of-species.txt"]
 # Twitter topics on which the chain will be tested
 query_topics = topics
 
+# Learning depth.
+# Higher = more coherence
+# Lower = more diversity
+chain_depth = 2
+
+# Do we include HTTP(S) links in the Markov chain ?
+no_http = True
+
+# Do we include hashtags in the Markov chain ?
+no_hashtags = True
+
+# Do we include @users tags in the Markov chain ?
+no_at_user = True
+
 # ============
 
 
@@ -77,14 +91,19 @@ class TwitterBot:
 	def train_from_texts(self, sources):
 		self.train_chain(get_generator_for_files(sources), noparagraphs=True)
 	
-	def train_from_twitter(self, topics, lang='en', max_count_per_tweet=1000):
+	def train_from_twitter(self, topics, lang='en', max_count_per_tweet=1000, no_http=True, no_hashtags=False, no_at_user=False):
 		def get_twitter_generator(api, tpcs, l, c):
 			for tp in tpcs:
 				reply = api.search.tweets(q=tp,lang=l,count=c)
 				for t in reply['statuses']:
 					# Brutally convert to ASCII
-					asciidata=t['text'].encode('UTF-8').decode("ascii","ignore")
-					string = re.sub(r'http(s)?://\S+',r'',asciidata)
+					string=t['text'].encode('UTF-8').decode("ascii","ignore")
+					if(no_http):
+						string = re.sub(r'http(s)?://\S+',r'',string)
+					if(no_hashtags):
+						string = re.sub(r'#\S+',r'',string)
+					if(no_at_user):
+						string = re.sub(r'@\S+',r'',string)
 					for char in string:
 						yield char
 		self.train_chain(get_twitter_generator(self.twitter, topics, lang, max_count_per_tweet), noparagraphs=True)
@@ -180,13 +199,13 @@ class TwitterBot:
 
 def main():
 	print("Instantiating TwitterBot and connecting to Twitter...")
-	b = TwitterBot(2)
+	b = TwitterBot(chain_depth)
 	if(sources):
 		print("Training the bot from text sources: "+str(sources))
 		b.train_from_texts(sources)
 	if(topics):
 		print("Training the bot from twitter. Topics: "+str(topics))
-		b.train_from_twitter(topics)
+		b.train_from_twitter(topics, no_http, no_hashtags, no_at_user)
 	print("Done with training.")
 	
 #	print("Chain statistics :")
