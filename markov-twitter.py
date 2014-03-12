@@ -84,7 +84,7 @@ class TwitterBot:
 				for t in reply['statuses']:
 					# Brutally convert to ASCII
 					asciidata=t['text'].encode('UTF-8').decode("ascii","ignore")
-					string = re.sub(r'http://\S+',r'',asciidata)
+					string = re.sub(r'http(s)?://\S+',r'',asciidata)
 					for char in string:
 						yield char
 		self.train_chain(get_twitter_generator(self.twitter, topics, lang, max_count_per_tweet), noparagraphs=True)
