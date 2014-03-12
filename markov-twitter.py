@@ -13,6 +13,7 @@ import os
 import random
 import sys
 import copy
+import re
 
 sys.path.append("lib/twitter")
 from twitter import *
@@ -83,7 +84,8 @@ class TwitterBot:
 				for t in reply['statuses']:
 					# Brutally convert to ASCII
 					asciidata=t['text'].encode('UTF-8').decode("ascii","ignore")
-					for char in asciidata:
+					string = re.sub(r'http://\S+',r'',asciidata)
+					for char in string:
 						yield char
 		self.train_chain(get_twitter_generator(self.twitter, topics, lang, max_count_per_tweet), noparagraphs=True)
 
