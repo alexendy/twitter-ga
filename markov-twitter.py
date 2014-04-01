@@ -64,7 +64,17 @@ def get_generator_for_files(files):
 				for char in line:
 					yield char
 	return charinput(paths)
-			
+
+def tweet_to_asciistring(tweet, no_http=True, no_hashtags=False, no_at_user=False):
+	string = tweet['text'].encode('UTF-8').decode("ascii","ignore") # Brutally convert to ASCII
+	if(no_http):
+		string = re.sub(r'http(s)?://\S+',r'',string)
+	if(no_hashtags):
+		string = re.sub(r'#\S+',r'',string)
+	if(no_at_user):
+		string = re.sub(r'@\S+',r'',string)
+	return string
+	
 
 class TwitterBot:
 	def __init__(self, chain_length=2):
@@ -90,16 +100,6 @@ class TwitterBot:
 	def train_from_texts(self, sources):
 		self.train_chain(get_generator_for_files(sources), noparagraphs=True)
 	
-	def tweet_to_asciistring(self, tweet, no_http=True, no_hashtags=False, no_at_user=False):
-		# Brutally convert to ASCII
-		string=tweet['text'].encode('UTF-8').decode("ascii","ignore")
-		if(no_http):
-			string = re.sub(r'http(s)?://\S+',r'',string)
-		if(no_hashtags):
-			string = re.sub(r'#\S+',r'',string)
-		if(no_at_user):
-			string = re.sub(r'@\S+',r'',string)
-		return string
 
 
 	def train_from_twitter(self, topics, lang='en', n_min_per_tweet=200, no_http=True, no_hashtags=False, no_at_user=False):
@@ -113,15 +113,15 @@ class TwitterBot:
 					string = tweet_to_asciistring(t, nlinks, nh, nat)
 					for char in string:
 						yield char
+
 				while (tweet_count < c):
-					count = count + 1
 					reply = api.search.tweets(q=tp,lang=l,count=100,max_id=(last_id-1))
 					tweet_count += len(reply['statuses'])
 					for t in reply['statuses']:
 						string = tweet_to_asciistring(t, nlinks, nh, nat)
 						for char in string:
 							yield char
-				print(str(tweer_count)+" tweets about "+tp)
+				print(str(tweet_count)+" tweets about "+tp)
 		self.train_chain(get_twitter_generator(self.twitter, topics, lang, n_min_per_tweet, no_http, no_hashtags, no_at_user), noparagraphs=True)
 
 		
