@@ -107,7 +107,6 @@ class TwitterBot:
 			for tp in tpcs:
 				reply = api.search.tweets(q=tp,lang=l,count=100)
 				tweet_count = len(reply['statuses'])
-				last_id = 0
 				for t in reply['statuses']:
 					last_id = t['id']
 					string = tweet_to_asciistring(t, nlinks, nh, nat)
@@ -115,6 +114,7 @@ class TwitterBot:
 						yield char
 
 				while (tweet_count < c):
+					last_id = min([t['id'] for t in reply['statuses']])
 					reply = api.search.tweets(q=tp,lang=l,count=100,max_id=(last_id-1))
 					tweet_count += len(reply['statuses'])
 					for t in reply['statuses']:
