@@ -23,6 +23,11 @@ How to test stuff
   * Twitter topics which will be searched, by default: "evolution", "Darwin", "natural selection" and "survival of the fittest"
 * Run markov-twitter.py to generate tweets about those topics, based on the training material. (Nothing is actually tweeted, tweets are only printed.)
 
+Todo
+----
+* Implement this : https://dev.twitter.com/docs/working-with-timelines so we can have more than 100 tweets at once
+* GA
+
 References
 ----------
 * Bot IRC Triplie-NG : https://github.com/spion/triplie-ng/
