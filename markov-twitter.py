@@ -14,6 +14,7 @@ import random
 import sys
 import copy
 import re
+import sys
 
 sys.path.append("lib/twitter")
 from twitter import *
@@ -91,12 +92,13 @@ class TwitterBot:
 	def train_from_texts(self, sources):
 		self.train_chain(get_generator_for_files(sources), noparagraphs=True)
 	
-	def train_from_twitter(self, topics, lang='en', max_count_per_tweet=1000, no_http=True, no_hashtags=False, no_at_user=False):
+	def train_from_twitter(self, topics, lang='en', max_count_per_tweet=100, no_http=True, no_hashtags=False, no_at_user=False, nbr_pages=10):
 		def get_twitter_generator(api, tpcs, l, c, nlinks, nh, nat):
 			for tp in tpcs:
 				reply = api.search.tweets(q=tp,lang=l,count=c)
-				print(str(len(reply['statuses']))+" tweets about "+tp)
+				twittCount = len(reply['statuses'])
 				for t in reply['statuses']:
+					last_id = t['id']
 					# Brutally convert to ASCII
 					string=t['text'].encode('UTF-8').decode("ascii","ignore")
 					if(nlinks):
@@ -107,6 +109,25 @@ class TwitterBot:
 						string = re.sub(r'@\S+',r'',string)
 					for char in string:
 						yield char
+				count = 0
+				while (count <  nbr_pages-1):
+					count = count + 1
+					reply = api.search.tweets(q=tp,lang=l,count=c,max_id=last_id)
+					twittCount = twittCount + len(reply['statuses'])
+					for t in reply['statuses']:
+						last_id = t['id']
+						# Brutally convert to ASCII
+						string=t['text'].encode('UTF-8').decode("ascii","ignore")
+						if(nlinks):
+							string = re.sub(r'http(s)?://\S+',r'',string)
+						if(nh):
+							string = re.sub(r'#\S+',r'',string)
+						if(nat):
+							string = re.sub(r'@\S+',r'',string)
+						for char in string:
+							yield char
+							
+				print(str(twittCount)+" tweets about "+tp)
 		self.train_chain(get_twitter_generator(self.twitter, topics, lang, max_count_per_tweet, no_http, no_hashtags, no_at_user), noparagraphs=True)
 
 		
