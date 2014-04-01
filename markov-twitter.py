@@ -108,6 +108,10 @@ class TwitterBot:
 			for tp in tpcs:
 				reply = api.search.tweets(q=tp,lang=l,count=100)
 				tweet_count = len(reply['statuses'])
+				if(tweet_count == 0):
+					print("WARNING: Twitter did not return anu tweet for {}. Maybe the number of requests available is exhausted. Will not use that topic for learning )".format(tp))
+					continue
+
 				for t in reply['statuses']:
 					string = tweet_to_asciistring(t, nlinks, nh, nat)
 					for char in string:
