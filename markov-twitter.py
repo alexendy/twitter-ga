@@ -23,7 +23,8 @@ from twitter import *
 # =============
 
 # Twitter topics for initial chain training
-topics = ("#evolution","#Darwin","#naturalSelection","#survivalOfTheFittest")
+#topics = ("#evolution","#Darwin","#naturalSelection","#survivalOfTheFittest")
+topics = ("#evolution","#Darwin","#survivalOfTheFittest")
 #topics = () # Train only from texts
 
 # Textual sources for initial
@@ -108,7 +109,6 @@ class TwitterBot:
 				reply = api.search.tweets(q=tp,lang=l,count=100)
 				tweet_count = len(reply['statuses'])
 				for t in reply['statuses']:
-					last_id = t['id']
 					string = tweet_to_asciistring(t, nlinks, nh, nat)
 					for char in string:
 						yield char
