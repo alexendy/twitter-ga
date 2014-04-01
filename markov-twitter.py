@@ -66,8 +66,6 @@ def get_generator_for_files(files):
 	return charinput(paths)
 			
 
-
-
 class TwitterBot:
 	def __init__(self, chain_length=2):
 		self.chain = MarkovState()
@@ -92,43 +90,39 @@ class TwitterBot:
 	def train_from_texts(self, sources):
 		self.train_chain(get_generator_for_files(sources), noparagraphs=True)
 	
-	def train_from_twitter(self, topics, lang='en', max_count_per_tweet=100, no_http=True, no_hashtags=False, no_at_user=False, nbr_pages=10):
+	def tweet_to_asciistring(self, tweet, no_http=True, no_hashtags=False, no_at_user=False):
+		# Brutally convert to ASCII
+		string=tweet['text'].encode('UTF-8').decode("ascii","ignore")
+		if(no_http):
+			string = re.sub(r'http(s)?://\S+',r'',string)
+		if(no_hashtags):
+			string = re.sub(r'#\S+',r'',string)
+		if(no_at_user):
+			string = re.sub(r'@\S+',r'',string)
+		return string
+
+
+	def train_from_twitter(self, topics, lang='en', n_min_per_tweet=200, no_http=True, no_hashtags=False, no_at_user=False):
 		def get_twitter_generator(api, tpcs, l, c, nlinks, nh, nat):
 			for tp in tpcs:
-				reply = api.search.tweets(q=tp,lang=l,count=c)
-				twittCount = len(reply['statuses'])
+				reply = api.search.tweets(q=tp,lang=l,count=100)
+				tweet_count = len(reply['statuses'])
+				last_id = 0
 				for t in reply['statuses']:
 					last_id = t['id']
-					# Brutally convert to ASCII
-					string=t['text'].encode('UTF-8').decode("ascii","ignore")
-					if(nlinks):
-						string = re.sub(r'http(s)?://\S+',r'',string)
-					if(nh):
-						string = re.sub(r'#\S+',r'',string)
-					if(nat):
-						string = re.sub(r'@\S+',r'',string)
+					string = tweet_to_asciistring(t, nlinks, nh, nat)
 					for char in string:
 						yield char
-				count = 0
-				while (count <  nbr_pages-1):
+				while (tweet_count < c):
 					count = count + 1
-					reply = api.search.tweets(q=tp,lang=l,count=c,max_id=last_id)
-					twittCount = twittCount + len(reply['statuses'])
+					reply = api.search.tweets(q=tp,lang=l,count=100,max_id=(last_id-1))
+					tweet_count += len(reply['statuses'])
 					for t in reply['statuses']:
-						last_id = t['id']
-						# Brutally convert to ASCII
-						string=t['text'].encode('UTF-8').decode("ascii","ignore")
-						if(nlinks):
-							string = re.sub(r'http(s)?://\S+',r'',string)
-						if(nh):
-							string = re.sub(r'#\S+',r'',string)
-						if(nat):
-							string = re.sub(r'@\S+',r'',string)
+						string = tweet_to_asciistring(t, nlinks, nh, nat)
 						for char in string:
 							yield char
-							
-				print(str(twittCount)+" tweets about "+tp)
-		self.train_chain(get_twitter_generator(self.twitter, topics, lang, max_count_per_tweet, no_http, no_hashtags, no_at_user), noparagraphs=True)
+				print(str(tweer_count)+" tweets about "+tp)
+		self.train_chain(get_twitter_generator(self.twitter, topics, lang, n_min_per_tweet, no_http, no_hashtags, no_at_user), noparagraphs=True)
 
 		
 
@@ -227,7 +221,7 @@ def main():
 		b.train_from_texts(sources)
 	if(topics):
 		print("Training the bot from twitter. Topics: "+str(topics))
-		b.train_from_twitter(topics, 'en', 1000, nohttp, nohashtags, noatuser)
+		b.train_from_twitter(topics, 'en', 200, nohttp, nohashtags, noatuser)
 	print("Done with training.")
 	
 #	print("Chain statistics :")
