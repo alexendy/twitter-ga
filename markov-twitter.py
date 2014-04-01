@@ -23,8 +23,7 @@ from twitter import *
 # =============
 
 # Twitter topics for initial chain training
-#topics = ("#evolution","#Darwin","#naturalSelection","#survivalOfTheFittest")
-topics = ("#evolution","#Darwin","#survivalOfTheFittest")
+topics = ("#evolution","#Darwin","#naturalSelection","#survivalOfTheFittest")
 #topics = () # Train only from texts
 
 # Textual sources for initial
@@ -68,13 +67,14 @@ def get_generator_for_files(files):
 
 def tweet_to_asciistring(tweet, no_http=True, no_hashtags=False, no_at_user=False):
 	string = tweet['text'].encode('UTF-8').decode("ascii","ignore") # Brutally convert to ASCII
+	string = re.sub('\n',' ',string)
 	if(no_http):
 		string = re.sub(r'http(s)?://\S+',r'',string)
 	if(no_hashtags):
 		string = re.sub(r'#\S+',r'',string)
 	if(no_at_user):
 		string = re.sub(r'@\S+',r'',string)
-	return string
+	return string.strip()
 	
 
 class TwitterBot:
@@ -115,7 +115,10 @@ class TwitterBot:
 
 				while (tweet_count < c):
 					last_id = min([t['id'] for t in reply['statuses']])
-					reply = api.search.tweets(q=tp,lang=l,count=100,max_id=(last_id-1))
+					reply = api.search.tweets(q=tp,lang=l,count=100,max_id=(last_id - 1))
+					if(len(reply['statuses']) == 0):
+						print("WARNING: Could not find enough tweets for {} (Twitter returned zero tweets before ID {})".format(tp,last_id))
+						break
 					tweet_count += len(reply['statuses'])
 					for t in reply['statuses']:
 						string = tweet_to_asciistring(t, nlinks, nh, nat)
