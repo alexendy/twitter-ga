@@ -23,7 +23,7 @@ from twitter import *
 # =============
 
 # Twitter topics for initial chain training
-topics = ("#evolution","#Darwin","#naturalSelection","#survivalOfTheFittest")
+topics = (("#evolution","#Darwin","#naturalSelection","#survivalOfTheFittest"),("#digimon","#skylanders","#pokemon"))
 #topics = () # Train only from texts
 
 # Textual sources for initial
@@ -219,30 +219,65 @@ class TwitterBot:
 			self.chain.markov.data[k][0] += delta_total # adjust number of occurences
 		print("Links mutation done. "+str(n_mutated)+" links were altered.")
 
+	def mutate_links_delete(self, p_mutation):
+		"""Delate links.
+    		Each link has a probability p_mutation to be affected.
+		"""
+		n_deleted = 0
+		for k in self.chain.markov.data.keys(): # For each node
+			delta_total = 0
+			to_delete = []
+			for k2 in self.chain.markov.data[k][1].keys(): # For each link
+				if(random.random() < p_mutation):
+					to_delete.append(k2)
+					n_deleted += 1
+			for todel in to_delete:
+				self.chain.markov.data[k][0] -= self.chain.markov.data[k][1][todel]
+				del self.chain.markov.data[k][1][todel]
+					
+		print("Links delation done. "+str(n_deleted)+" links were supressed.")
+
+	def crossover(self, mate, scale):
+		"""
+		"""
+		print("Crossover done.")
+
 
 def main():
 	print("Instantiating TwitterBot and connecting to Twitter...")
 	b = TwitterBot(chain_depth)
+	c = TwitterBot(chain_depth)
 	if(sources):
 		print("Training the bot from text sources: "+str(sources))
 		b.train_from_texts(sources)
-	if(topics):
+	if(topics[0]):
 		print("Training the bot from twitter. Topics: "+str(topics))
-		b.train_from_twitter(topics, 'en', 200, nohttp, nohashtags, noatuser)
+		b.train_from_twitter(topics[0], 'en', 200, nohttp, nohashtags, noatuser)	
+	
+	if(topics[1]):
+		print("Training the bot from twitter. Topics: "+str(topics))
+		c.train_from_twitter(topics[1], 'en', 200, nohttp, nohashtags, noatuser)
 	print("Done with training.")
 	
 #	print("Chain statistics :")
 #	b.print_chain_info()
-
 	print("Mutating weights...")
 	b.mutate_links_weights(0.05,0.5)
-
+#	b.print_chain_info()
+	print("Mutating delate links...")
+	b.mutate_links_delete(0.10)
+#	b.print_chain_info()
 	print("All done. Testing the chain output:")
+
 	for topic in query_topics:
 		#b.print_ngram_info(tuple(topic.split()))
 		print ("According to Twitter, and Charles Darwin, here is some stuff about "+topic+":")
 		for i in range(5):
 			print("- "+b.get_tweet_about(topic))
+		print("\n")
+		print ("According to Twitter, and Nintendo, here is some stuff about "+topic+":")
+		for i in range(5):
+			print("- "+c.get_tweet_about(topic))
 		print("\n")
 
 
